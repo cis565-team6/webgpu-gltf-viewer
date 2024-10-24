@@ -31,10 +31,8 @@ export default class PresetCamera extends Camera {
   }
 
   updateView() {
-    const e = vec3.create();
-    this.eye = vec4.create();
-    vec3.transformMat4(e, e, this.globalTransform);
-    vec4.set(this.eye, e[0], e[1], e[2], 0);
+    this.eye = vec3.create();
+    vec3.transformMat4(this.eye, this.eye, this.globalTransform);
     mat4.invert(this.view, this.globalTransform);
   }
 }
