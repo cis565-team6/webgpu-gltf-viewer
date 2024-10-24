@@ -45,10 +45,9 @@ export class Renderer {
       colorAttachments: [],
       depthStencilAttachment: {
         view: depthTexture.createView(),
-        depthLoadValue: 1.0,
-        depthStoreOp: 'store',
-        stencilLoadValue: 0,
-        stencilStoreOp: 'store',
+        depthClearValue: 1.0,
+        depthLoadOp: 'clear',
+        depthStoreOp: 'store'
       },
     };
 
@@ -57,7 +56,7 @@ export class Renderer {
         canvas.clientWidth * devicePixelRatio,
         canvas.clientHeight * devicePixelRatio,
       ];
-      context.configure({ device, format: contextFormat, size });
+      context.configure({ device, format: contextFormat });
       depthTexture.destroy();
       depthTexture = device.createTexture({
         size,
@@ -83,7 +82,8 @@ export class Renderer {
       this.renderPassDesc.colorAttachments = [
         {
           view: this.context.getCurrentTexture().createView(),
-          loadValue: { r: 0.3, g: 0.5, b: 0.7, a: 1 },
+          clearValue: [0, 0, 0, 0],
+          loadOp: 'clear',
           storeOp: 'store',
         },
       ];
@@ -106,7 +106,7 @@ export class Renderer {
         });
       });
 
-      passEncoder.endPass();
+      passEncoder.end();
       this.device.queue.submit([commandEncoder.finish()]);
 
       this.stats.end();
@@ -161,14 +161,14 @@ export async function createRenderer(canvas: HTMLCanvasElement) {
   const adapter = await entry.requestAdapter();
   const device = await adapter!.requestDevice();
   const context = canvas.getContext('webgpu');
-  const format = context!.getPreferredFormat(adapter!);
+
+  canvas.width = canvas.clientWidth * devicePixelRatio;
+  canvas.height = canvas.clientHeight * devicePixelRatio;
+
+  const format = navigator.gpu.getPreferredCanvasFormat();
   context!.configure({
     device,
     format,
-    size: [
-      canvas.clientWidth * devicePixelRatio,
-      canvas.clientHeight * devicePixelRatio,
-    ],
   });
   return new Renderer(canvas, device, context!, format);
 }

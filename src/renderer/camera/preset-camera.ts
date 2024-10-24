@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 import Camera from './camera';
 
 export default class PresetCamera extends Camera {
@@ -31,8 +31,10 @@ export default class PresetCamera extends Camera {
   }
 
   updateView() {
-    this.eye = vec3.create();
-    vec3.transformMat4(this.eye, this.eye, this.globalTransform);
+    const e = vec3.create();
+    this.eye = vec4.create();
+    vec3.transformMat4(e, e, this.globalTransform);
+    vec4.set(this.eye, e[0], e[1], e[2], 0);
     mat4.invert(this.view, this.globalTransform);
   }
 }

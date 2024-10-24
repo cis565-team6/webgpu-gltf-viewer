@@ -31,40 +31,40 @@ export default function frag(primitive: Primitive, material: any) {
 
   return /* wgsl */ `
 
-  [[block]] struct Camera
+  struct Camera
   {
-      eye: vec3<f32>;
+      eye: vec4<f32>,
   };
-  [[group(0), binding(1)]] var<uniform> camera: Camera;
+  @group(0) @binding(1) var<uniform> camera: Camera;
 
   ${
     baseColorTexture
-      ? `[[group(1), binding(1)]] var texSampler: sampler;
-         [[group(1), binding(2)]] var tex: texture_2d<f32>; /* wgsl */`
+      ? `@group(1) @binding(1) var texSampler: sampler;
+         @group(1) @binding(2) var tex: texture_2d<f32>; /* wgsl */`
       : ''
   }
   ${
     metallicRoughnessTexture
-      ? `[[group(1), binding(3)]] var metalRoughSampler: sampler;
-         [[group(1), binding(4)]] var metalRoughTex: texture_2d<f32>; /* wgsl */`
+      ? `@group(1) @binding(3) var metalRoughSampler: sampler;
+         @group(1) @binding(4) var metalRoughTex: texture_2d<f32>; /* wgsl */`
       : ''
   }
   ${
     normalTexture
-      ? `[[group(1), binding(5)]] var normalSampler: sampler;
-         [[group(1), binding(6)]] var normalTex: texture_2d<f32>; /* wgsl */`
+      ? `@group(1) @binding(5) var normalSampler: sampler;
+         @group(1) @binding(6) var normalTex: texture_2d<f32>; /* wgsl */`
       : ''
   }
   ${
     occlusionTexture
-      ? `[[group(1), binding(7)]] var occlusionSampler: sampler;
-         [[group(1), binding(8)]] var occlusionTex: texture_2d<f32>; /* wgsl */`
+      ? `@group(1) @binding(7) var occlusionSampler: sampler;
+         @group(1) @binding(8) var occlusionTex: texture_2d<f32>; /* wgsl */`
       : ''
   }
   ${
     emissiveTexture
-      ? `[[group(1), binding(9)]] var emissiveSampler: sampler;
-         [[group(1), binding(10)]] var emissiveTex: texture_2d<f32>; /* wgsl */`
+      ? `@group(1) @binding(9) var emissiveSampler: sampler;
+         @group(1) @binding(10) var emissiveTex: texture_2d<f32>; /* wgsl */`
       : ''
   }
 
@@ -74,7 +74,7 @@ export default function frag(primitive: Primitive, material: any) {
     return vec4<f32>(pow(color.rgb, vec3<f32>(2.2)), color.a);
   }
 
-  let pi: f32 = 3.141592653589793;
+  const pi: f32 = 3.141592653589793;
 
   fn blinnPhong(color: vec3<f32>,
            l: vec3<f32>,
@@ -127,30 +127,30 @@ export default function frag(primitive: Primitive, material: any) {
       return ndotl * (diffuse + specular) * 2.0 + color * 0.1;
   }
 
-  [[stage(fragment)]]
-  fn main([[location(0)]] vNormal: vec3<f32>,
-          [[location(1)]] worldPos: vec3<f32>,
+  @fragment
+  fn main(@location(0) vNormal: vec3<f32>,
+          @location(1) worldPos: vec3<f32>,
           ${
             hasUV
-              ? `[[location(${(location += 1)})]] uv: vec2<f32>, /* wgsl */`
+              ? `@location(${(location += 1)}) uv: vec2<f32>, /* wgsl */`
               : ''
           }
           ${
             hasUV1
-              ? `[[location(${(location += 1)})]] uv1: vec2<f32>, /* wgsl */`
+              ? `@location(${(location += 1)}) uv1: vec2<f32>, /* wgsl */`
               : ''
           }
           ${
             hasTangent
-              ? `[[location(${(location += 1)})]] tangent: vec3<f32>,
-                 [[location(${(location += 1)})]] bitangent: vec3<f32>, /* wgsl */`
+              ? `@location(${(location += 1)}) tangent: vec3<f32>,
+                 @location(${(location += 1)}) bitangent: vec3<f32>, /* wgsl */`
               : ''
           }
           ${
             hasVertexColor
-              ? `[[location(${(location += 1)})]] vColor: vec4<f32>, /* wgsl */`
+              ? `@location(${(location += 1)}) vColor: vec4<f32>, /* wgsl */`
               : ''
-          }) -> [[location(0)]] vec4<f32>
+          }) -> @location(0) vec4<f32>
   {
       let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
 
@@ -212,7 +212,7 @@ export default function frag(primitive: Primitive, material: any) {
           : ''
       }
 
-      let viewDir = normalize(camera.eye - worldPos);
+      let viewDir = normalize(camera.eye.xyz - worldPos);
       ${
         material.doubleSided
           ? `if (dot(normal, viewDir) < 0.0)

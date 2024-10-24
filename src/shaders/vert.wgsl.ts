@@ -13,72 +13,72 @@ export default function vert(primitive: Primitive, instanceCount: number) {
 
   return /* wgsl */ `
 
-  [[block]] struct Camera
+struct Camera
   {
-      projView: mat4x4<f32>;
+      projView: mat4x4<f32>,
   };
-  [[group(0), binding(0)]] var<uniform> camera: Camera;
+  @group(0) @binding(0) var<uniform> camera: Camera;
 
   struct Model {
-      matrix: mat4x4<f32>;
-      invTr: mat4x4<f32>;
+      matrix: mat4x4<f32>,
+      invTr: mat4x4<f32>,
   };
-  [[block]] struct Models
+ struct Models
   {
-      model: [[stride(128)]] array<Model, ${instanceCount}>;
+      model: array<Model, ${instanceCount}>,
   };
-  [[group(1), binding(0)]] var<uniform> models: Models;
+  @group(1)  @binding(0) var<uniform> models: Models;
 
   struct VertexOutput
   {
-      [[builtin(position)]] position: vec4<f32>;
-      [[location(0)]] normal: vec3<f32>;
-      [[location(1)]] worldPos: vec3<f32>;
+      @builtin(position) position: vec4<f32>,
+      @location(0) normal: vec3<f32>,
+      @location(1) worldPos: vec3<f32>,
       ${
         hasUV
-          ? `[[location(${(outLocation += 1)})]] uv: vec2<f32>; /* wgsl */`
+          ? `@location(${(outLocation += 1)}) uv: vec2<f32>, /* wgsl */`
           : ''
       }
       ${
         hasUV1
-          ? `[[location(${(outLocation += 1)})]] uv1: vec2<f32>; /* wgsl */`
+          ? `@location(${(outLocation += 1)}) uv1: vec2<f32>, /* wgsl */`
           : ''
       }
       ${
         hasTangent
-          ? `[[location(${(outLocation += 1)})]] tangent: vec3<f32>;
-             [[location(${(outLocation += 1)})]] bitangent: vec3<f32>; /* wgsl */`
+          ? `@location(${(outLocation += 1)}) tangent: vec3<f32>,
+             @location(${(outLocation += 1)}) bitangent: vec3<f32>, /* wgsl */`
           : ''
       }
       ${
         hasVertexColor
-          ? `[[location(${(outLocation += 1)})]] color: vec4<f32>; /* wgsl */`
+          ? `@location(${(outLocation += 1)}) color: vec4<f32>, /* wgsl */`
           : ''
       }
   };
 
-  [[stage(vertex)]]
-  fn main([[builtin(instance_index)]] instanceIndex : u32,
-          [[location(0)]] pos: vec3<f32>,
-          [[location(1)]] normal: vec3<f32>,
+  @vertex
+  fn main(@builtin(instance_index) instanceIndex : u32,
+          @location(0) pos: vec3<f32>,
+          @location(1) normal: vec3<f32>,
           ${
             hasUV
-              ? `[[location(${(inLocation += 1)})]] uv: vec2<f32>, /* wgsl */`
+              ? `@location(${(inLocation += 1)}) uv: vec2<f32>, /* wgsl */`
               : ''
           }
           ${
             hasUV1
-              ? `[[location(${(inLocation += 1)})]] uv1: vec2<f32>, /* wgsl */`
+              ? `@location(${(inLocation += 1)}) uv1: vec2<f32>, /* wgsl */`
               : ''
           }
           ${
             hasTangent
-              ? `[[location(${(inLocation += 1)})]] tangent: vec4<f32>, /* wgsl */`
+              ? `@location(${(inLocation += 1)}) tangent: vec4<f32>, /* wgsl */`
               : ''
           }
           ${
             hasVertexColor
-              ? `[[location(${(inLocation += 1)})]] color: vec4<f32>, /* wgsl */`
+              ? `@location(${(inLocation += 1)}) color: vec4<f32>, /* wgsl */`
               : ''
           }) -> VertexOutput
   {

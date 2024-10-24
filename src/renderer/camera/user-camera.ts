@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 import { clamp } from '../../util';
 import Camera from './camera';
 
@@ -81,13 +81,15 @@ export default class UserCamera extends Camera {
   }
 
   updateView() {
-    this.eye = vec3.fromValues(
+
+    const e = vec3.fromValues(
       this.center[0],
       this.center[1],
       this.center[2] + this.radius
     );
-    vec3.rotateX(this.eye, this.eye, this.center, this.phi);
-    vec3.rotateY(this.eye, this.eye, this.center, this.theta);
-    mat4.lookAt(this.view, this.eye, this.center, up);
+    vec3.rotateX(e, e, this.center, this.phi);
+    vec3.rotateY(e, e, this.center, this.theta);
+    mat4.lookAt(this.view, e, this.center, up);
+    vec4.set(this.eye, e[0], e[1], e[2], 0);
   }
 }

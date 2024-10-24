@@ -1,7 +1,7 @@
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3, vec4, mat4 } from 'gl-matrix';
 
 export default abstract class Camera {
-  eye = vec3.create();
+  eye = vec4.create();
 
   view = mat4.create();
 
