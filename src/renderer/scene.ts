@@ -48,7 +48,7 @@ export default class Scene {
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, // eslint-disable-line no-bitwise
     });
     const eyeBuffer = device.createBuffer({
-      size: 4 * 3,
+      size: 4 * 4,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, // eslint-disable-line no-bitwise
     });
     const cameraBindGroup = device.createBindGroup({
@@ -177,6 +177,7 @@ export default class Scene {
         }
       });
     }
+
     (this.presetCamera || this.userCamera).update(device, passEncoder);
   }
 
